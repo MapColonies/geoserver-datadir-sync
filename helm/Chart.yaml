@@ -1,0 +1,5 @@
+apiVersion: v2
+name: geoserver
+version: 0.0.1
+appVersion: 0.0.1
+description: Chart for geoserver in openshift

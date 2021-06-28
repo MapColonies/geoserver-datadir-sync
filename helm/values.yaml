@@ -1,0 +1,55 @@
+image:
+  registry: avi
+  geoserverRepository: geoserver-os
+  geoserverTag: "0.0.2"
+  sidecarRepository: config-sidecar
+  sidecarTag: "meow"
+  pullPolicy: Always
+
+updateInterval: 120000
+
+geoserverDataDir: /opt/geoserver/data_dir
+
+geoserverUser: admin
+
+# For prefilled password
+# It will be stored in secret later
+geoserverPassword: geoserver
+
+s3:
+  accessKey: avi
+  secretKey: avi
+  endpoint: http://avi:9000/
+  bucketName: geoserver
+  dataKey: data.tar.gz
+  stateKey: state  
+
+# Define this for extra GeoServer environment variables
+extraGeoserverEnv: |
+#  - name: KEY_1
+#    value: "VALUE_1"
+#  - name: KEY_2
+#    value: "VALUE_2"
+
+
+
+service:
+  ## GeoServer service type
+  type: ClusterIP
+  # clusterIP: ""
+  # externalIPs: ""
+  port: 80
+
+  # nodePort:
+
+  labels: |
+  annotations: |
+  # loadBalancerIP:
+
+  # loadBalancerSourceRanges:
+  # - 10.10.10.0/24
+
+route:
+  enabled: true
+  tls: false
+  path: /
