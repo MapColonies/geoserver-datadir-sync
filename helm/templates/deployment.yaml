@@ -35,7 +35,7 @@ spec:
         {{- end }}
     spec:
       initContainers:
-        - name: geoserver-init
+        - name: {{ template "geoserver.fullname" . }}-init
           image: {{ template "geoserver.sidecarImage" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
@@ -99,6 +99,28 @@ spec:
             failureThreshold: 3
             successThreshold: 1
             periodSeconds: 10
+          volumeMounts:
+          - mountPath: {{ .Values.geoserverDataDir }}
+            name: data-dir-volume
+        - name: {{ template "geoserver.fullname" . }}-config
+          image: {{ template "geoserver.sidecarImage" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.sidecarResources | nindent 12 }}
+          {{- end }}
+          env:
+            - name: IS_INIT_MODE
+              value: 'false'
+            - name: GEOSERVER_URL
+              value: http://localhost:8080/geoserver/rest/reload
+            {{- with .Values.extraSidecarEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ template "geoserver.secretName" . }}
+            - configMapRef:
+                name: {{ template "geoserver.fullname" . }}
           volumeMounts:
           - mountPath: {{ .Values.geoserverDataDir }}
             name: data-dir-volume

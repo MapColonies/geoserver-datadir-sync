@@ -1,12 +1,12 @@
 image:
-  registry: avi
+  registry: acrarolibotnonprod.azurecr.io
   geoserverRepository: geoserver-os
   geoserverTag: "0.0.2"
   sidecarRepository: config-sidecar
   sidecarTag: "meow"
   pullPolicy: Always
 
-updateInterval: 120000
+updateInterval: 10000
 
 geoserverDataDir: /opt/geoserver/data_dir
 
@@ -18,8 +18,8 @@ geoserverPassword: geoserver
 
 s3:
   accessKey: avi
-  secretKey: avi
-  endpoint: http://avi:9000/
+  secretKey: aviPassword
+  endpoint: http://locahost:9000/
   bucketName: geoserver
   dataKey: data.tar.gz
   stateKey: state  
@@ -31,7 +31,11 @@ extraGeoserverEnv: |
 #  - name: KEY_2
 #    value: "VALUE_2"
 
-
+extraSidecarEnv: |
+#  - name: KEY_1
+#    value: "VALUE_1"
+#  - name: KEY_2
+#    value: "VALUE_2"
 
 service:
   ## GeoServer service type
@@ -52,4 +56,4 @@ service:
 route:
   enabled: true
   tls: false
-  path: /
+  path: /geoserver

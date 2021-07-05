@@ -2,7 +2,7 @@
   "name": "geoserver-config-sidecar",
   "version": "1.0.0",
   "description": "This container fetches config for geoserver, and triggers a config reload",
-  "main": "index.js",
+  "main": "script.mjs",
   "engines": {
     "node": ">=14.8.0"
   },
@@ -18,10 +18,13 @@
   "author": "CptSchnitz",
   "license": "ISC",
   "dependencies": {
-    "zx": "^1.14.1",
-    "@aws-sdk/client-s3": "^3.18.0"
+    "@aws-sdk/client-s3": "^3.18.0",
+    "yargs": "^17.0.1",
+    "zx": "^1.14.1"
   },
   "devDependencies": {
-    "@aws-sdk/types": "^3.18.0"
+    "@aws-sdk/types": "^3.18.0",
+    "prettier": "^2.3.2",
+    "@map-colonies/prettier-config": "0.0.1"
   }
 }
