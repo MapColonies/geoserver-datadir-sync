@@ -10,8 +10,8 @@ RUN npm i --only=production
 
 COPY script.mjs .
 
+# uncomment while developing to make sure the docker runs on openshift
 # RUN useradd -ms /bin/bash user && usermod -a -G root user
-
 # USER user
 
 CMD ["npx", "zx", "./script.mjs"]
