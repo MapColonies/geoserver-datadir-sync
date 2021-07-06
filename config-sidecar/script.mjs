@@ -20,15 +20,10 @@ const args = yargs(process.argv.slice(3))
   .option('s3-state-key', { alias: 's', describe: 'The key for the config state object', nargs: 1, string: true, demandOption: true })
   .option('geoserver-user', { alias: 'U', describe: 'The geoserver user to authenticate with', nargs: 1, string: true })
   .option('geoserver-pass', { alias: 'P', describe: 'The geoserver password for the user to authenticate with', nargs: 1, string: true })
-  .option('geoserver-url', {
-    alias: 'u',
-    describe: 'the url to the reload endpoint on geoserver',
-    default: 'http://localhost:8080/geoserver/rest/reload',
-    nargs: 1,
-    string: true,
-  })
+  .option('geoserver-url', { alias: 'u', describe: 'the url to the reload endpoint on geoserver', default: 'http://localhost:8080/geoserver/rest/reload', nargs: 1, string: true })
   .option('data-dir-path', { alias: 'D', describe: 'The path to the data dir', nargs: 1, string: true, demandOption: true })
-  .option('update-interval', { alias: 'I', describe: 'The interval between configuration reload', nargs: 1, number: true, default: 120000 })
+  .option('update-interval', { alias: 'I', describe: 'The interval between configuration reload in milliseconds', nargs: 1, number: true, default: 120000 })
+  .option('wait-on-startup', { alias: 'w', describe: 'The time to wait before starting in milliseconds', nargs: 1, number: true, default: 30000 })
   .option('zx-shell', { alias: 'z', describe: 'The shell used by zx', nargs: 1, default: '/bin/bash' })
   .help('h')
   .alias('h', 'help').argv;
@@ -113,7 +108,7 @@ if (args.isInitMode) {
   console.log('finished updating, exiting gracefully');
 } else {
   // wait for geoserver to be ready
-  await sleep(30000);
+  await sleep(args.waitOnStartup);
 
   while (true) {
     await updateConfiguration();

@@ -22,8 +22,10 @@ Options:
   -u, --geoserver-url    the url to the reload endpoint on geoserver
                [string] [default: "http://localhost:8080/geoserver/rest/reload"]
   -D, --data-dir-path    The path to the data dir            [string] [required]
-  -I, --update-interval  The interval between configuration reload
-                                                      [number] [default: 120000]
+  -I, --update-interval  The interval between configuration reload in milisecond
+                         s                            [number] [default: 120000]
+  -w, --wait-on-startup  The time to wait before starting in miliseconds
+                                                       [number] [default: 30000]
   -z, --zx-shell         The shell used by zx             [default: "/bin/bash"]
   -h, --help             Show help                                     [boolean]
 ```
