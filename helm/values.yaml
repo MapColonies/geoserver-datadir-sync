@@ -1,7 +1,7 @@
 image:
   registry: acrarolibotnonprod.azurecr.io
   geoserverRepository: geoserver-os
-  geoserverTag: "0.0.2"
+  geoserverTag: "v1.0.0"
   sidecarRepository: config-sidecar
   sidecarTag: "meow"
   pullPolicy: Always
