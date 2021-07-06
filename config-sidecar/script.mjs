@@ -86,9 +86,7 @@ const updateConfiguration = async () => {
 
   await $`cp -r data_dir/* ${args.dataDirPath}`;
 
-  await $`rm -rf ${DATA_FILE}`;
-
-  await $`rm -rf data_dir/*`;
+  await $`rm -rf ${DATA_FILE} && rm -rf data_dir/*`;
 
   if (!args.isInitMode) {
     console.log(chalk.blue('sending config reload request to geoserver'));
