@@ -1,7 +1,7 @@
 image:
   registry: acrarolibotnonprod.azurecr.io
   geoserverRepository: geoserver-os
-  geoserverTag: "0.0.2"
+  geoserverTag: "v1.0.0-2.19.1"
   sidecarRepository: config-sidecar
   sidecarTag: "v1.0.0"
   pullPolicy: Always
@@ -22,7 +22,12 @@ s3:
   endpoint: http://locahost:9000/
   bucketName: geoserver
   dataKey: data.tar.gz
-  stateKey: state  
+  stateKey: state
+
+pgSslAuth:
+  enabled: false
+  secretName: secret-name
+  mountPath: '/tmp/certs-postgres'
 
 # Define this for extra GeoServer environment variables
 extraGeoserverEnv: |
