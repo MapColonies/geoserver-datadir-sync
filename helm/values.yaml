@@ -1,0 +1,64 @@
+image:
+  registry: acrarolibotnonprod.azurecr.io
+  geoserverRepository: geoserver-os
+  geoserverTag: "v1.0.0-2.19.1"
+  sidecarRepository: config-sidecar
+  sidecarTag: "v1.0.0"
+  pullPolicy: Always
+
+updateInterval: 10000
+
+geoserverDataDir: /opt/geoserver/data_dir
+
+geoserverUser: admin
+
+# For prefilled password
+# It will be stored in secret later
+geoserverPassword: geoserver
+
+s3:
+  accessKey: avi
+  secretKey: aviPassword
+  endpoint: http://locahost:9000/
+  bucketName: geoserver
+  dataKey: data.tar.gz
+  stateKey: state
+
+pgSslAuth:
+  enabled: false
+  secretName: secret-name
+  mountPath: '/tmp/certs-postgres'
+
+# Define this for extra GeoServer environment variables
+extraGeoserverEnv: |
+#  - name: KEY_1
+#    value: "VALUE_1"
+#  - name: KEY_2
+#    value: "VALUE_2"
+
+extraSidecarEnv: |
+#  - name: KEY_1
+#    value: "VALUE_1"
+#  - name: KEY_2
+#    value: "VALUE_2"
+
+service:
+  ## GeoServer service type
+  type: ClusterIP
+  # clusterIP: ""
+  # externalIPs: ""
+  port: 80
+
+  # nodePort:
+
+  labels: |
+  annotations: |
+  # loadBalancerIP:
+
+  # loadBalancerSourceRanges:
+  # - 10.10.10.0/24
+
+route:
+  enabled: true
+  tls: false
+  path: /geoserver
