@@ -41,6 +41,9 @@ spec:
           env:
             - name: IS_INIT_MODE
               value: 'true'
+            {{- with .Values.extraSidecarEnv }}
+            {{- tpl . $ | nindent 12 }}
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ template "geoserver.secretName" . }}
@@ -76,6 +79,12 @@ spec:
               value: 'true'
             - name: POSTGRES_CERTS_MOUNT_PATH
               value: {{ .Values.pgSslAuth.mountPath }}
+            {{- end }}            
+            {{- if .Values.rootCerts.enabled }}
+            - name: ADD_ROOT_CERTS
+              value: 'true'
+            - name: ROOT_CERTS_PATH
+              value: {{ .Values.rootCerts.mountPath }}
             {{- end }}
             {{- with .Values.extraGeoserverEnv }}
             {{- tpl . $ | nindent 12 }}
@@ -112,6 +121,10 @@ spec:
           - name: cert-conf
             mountPath: {{ .Values.pgSslAuth.mountPath }}
           {{- end }}
+          {{- if .Values.rootCerts.enabled }}
+          - name: root-cert-conf
+            mountPath: {{ .Values.rootCerts.mountPath }}
+          {{- end }}
         - name: {{ template "geoserver.fullname" . }}-config
           image: {{ template "geoserver.sidecarImage" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -141,5 +154,10 @@ spec:
       - name: cert-conf
         secret:
           secretName: {{ .Values.pgSslAuth.secretName }}
+      {{- end }}      
+      {{- if .Values.rootCerts.enabled }}
+      - name: root-cert-conf
+        secret:
+          secretName: {{ .Values.rootCerts.secretName }}
       {{- end }}
 

@@ -24,6 +24,11 @@ s3:
   dataKey: data.tar.gz
   stateKey: state
 
+rootCerts:
+  enabled: false
+  secretName: secret-name
+  mountPath: '/tmp/root-certs'
+
 pgSslAuth:
   enabled: false
   secretName: secret-name
