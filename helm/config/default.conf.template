@@ -1,0 +1,48 @@
+js_import conf.d/s3.js;
+
+js_set $s3date s3.now;
+js_set $s3auth s3.auth;
+
+upstream storage_url {
+    server $S3_HOST:$S3_PORT;
+}
+
+server {
+    listen 8080 default_server;
+
+    location /nginx_status {
+        # Enable Nginx stats
+        stub_status;
+    }
+    
+    location / {
+        js_content s3.redirect;
+    }
+
+    location @storage {
+
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Max-Age 3600;
+        add_header Access-Control-Expose-Headers Content-Length;
+        add_header Access-Control-Allow-Headers Range;
+
+        proxy_set_header Accept '*/*';
+        proxy_pass_request_headers on;
+        proxy_set_header Authorization $s3auth;
+        proxy_set_header Date $s3date;
+        proxy_set_header content-type '';
+        server_tokens off;
+        types { } default_type '';
+        proxy_pass http://storage_url$uri;
+    }
+
+    # redirect server error pages to the static page /50x.html
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

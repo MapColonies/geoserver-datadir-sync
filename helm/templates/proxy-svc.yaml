@@ -1,0 +1,21 @@
+{{- if .Values.proxy.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "geoserver.proxyFullName" . }}
+  labels:
+{{ include "geoserver.proxyLabels" . | indent 4 }}
+  annotations:
+    {{- with .Values.service.annotations }}
+    {{- tpl . $ | nindent 4 }}
+    {{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http-proxy
+      port: 8080
+      protocol: TCP
+      targetPort: http
+  selector:
+{{ include "geoserver.proxySelectorLabels" . | indent 4 }}
+{{- end -}}

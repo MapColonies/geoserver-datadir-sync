@@ -3,13 +3,14 @@ kind: ConfigMap
 metadata:
   name: {{ template "geoserver.fullname" . }}
   labels:
-    app: {{ template "geoserver.fullname" . }}
-    chart: {{ template "geoserver.chart" . }}
-    release: {{ .Release.Name | quote }}
+{{ include "geoserver.labels" . | indent 4}}
 data:
   S3_DATA_KEY: {{ .Values.s3.dataKey | quote }}
   S3_STATE_KEY: {{ .Values.s3.stateKey | quote }}
-  S3_ENDPOINT_URL: {{ .Values.s3.endpoint | quote }}
+  S3_ENDPOINT_URL: {{ printf "%s://%s:%s/" .Values.s3.protocol .Values.s3.host .Values.s3.port | quote }}
+  S3_HOST: {{ .Values.s3.host | quote }}
+  S3_PROTOCOL: {{ .Values.s3.protocol | quote }}
+  S3_PORT: {{ .Values.s3.port | quote }}
   S3_BUCKET_NAME: {{ .Values.s3.bucketName | quote }}
   DATA_DIR_PATH: {{ .Values.geoserverDataDir | quote }}
   UPDATE_INTERVAL: {{ .Values.updateInterval | default 120000 | quote }}

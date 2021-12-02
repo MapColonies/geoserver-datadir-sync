@@ -3,12 +3,7 @@ kind: Service
 metadata:
   name: {{ template "geoserver.fullname" . }}
   labels:
-    app: {{ template "geoserver.fullname" . }}
-    chart: {{ template "geoserver.chart" . }}
-    release: {{ .Release.Name | quote }}
-    {{- with .Values.service.labels }}
-    {{- tpl . $ | nindent 4 }}
-    {{- end }}
+{{ include "geoserver.labels" . | indent 4 }}
   annotations:
     {{- with .Values.service.annotations }}
     {{- tpl . $ | nindent 4 }}
@@ -21,5 +16,4 @@ spec:
       protocol: TCP
       targetPort: http-geoserver
   selector:
-    app: {{ template "geoserver.fullname" . }}
-    release: {{ .Release.Name | quote }}
+{{ include "geoserver.selectorLabels" . | indent 4 }}

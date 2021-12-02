@@ -1,0 +1,21 @@
+var currentTime = new Date().toUTCString();
+
+function now(r) {
+    return currentTime;
+}
+
+function auth(r) {
+    var accessId = process.env.AWS_ACCESS_KEY_ID;
+    var secretKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+    var hmac = require('crypto').createHmac('sha1', secretKey);
+    var stringToSign = `GET\n\n\n${currentTime}\n${r.uri}`;
+    var s3signature = hmac.update(stringToSign).digest('base64');
+    return `AWS ${accessId}:${s3signature}`;
+}
+
+function redirect(r) {
+    r.internalRedirect("@storage");
+}
+
+export default { now, auth, redirect };
