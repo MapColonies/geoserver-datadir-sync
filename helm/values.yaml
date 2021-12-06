@@ -25,6 +25,9 @@ replicaCount: 1
 # It will be stored in secret later
 geoserverPassword: geoserver
 
+initialMemory: "128M"
+maxMemory: "756M"
+
 s3:
   accessKey: avi
   secretKey: aviPassword
@@ -108,6 +111,13 @@ proxy:
     tag: "v1.1.0"
     pullPolicy: Always
   initialDelaySeconds: 10
+
+  cache:
+    enabled: true
+    path: /tmp
+    maxSize: "1g"
+    sliceSize: 1m
+    validTime: 24h
 
   route:
     enabled: true

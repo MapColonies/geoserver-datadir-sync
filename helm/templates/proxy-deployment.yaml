@@ -26,6 +26,10 @@ spec:
                 name: {{ template "geoserver.fullname" . }}
             - secretRef:
                 name: {{ template "geoserver.secretName" . }}
+            {{- if .Values.proxy.cache.enabled }}
+            - configMapRef:
+                name: {{ template "geoserver.proxyFullName" . }}-cache
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080
@@ -35,9 +39,9 @@ spec:
             httpGet:
               path: /nginx_status
               port: http
-          {{- if .Values.proxy.resources.enabled }}
+          {{- if .Values.proxy.resources }}
           resources:
-            {{- toYaml .Values.proxy.resources.value | nindent 12 }}
+            {{- toYaml .Values.proxy.resources | nindent 12 }}
           {{- end }}
           volumeMounts:
             - name: templates-mount
