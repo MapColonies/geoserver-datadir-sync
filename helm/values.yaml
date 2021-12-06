@@ -1,10 +1,17 @@
+global:
+#   partOf: 'app-of-apps'
+  pullPolicy: Always
+  pullSecretName: acr-registry
+  cloudProvider: {}
+
+cloudProvider:
+  dockerRegistryUrl: acrarolibotnonprod.azurecr.io
+
 image:
-  registry: acrarolibotnonprod.azurecr.io
   geoserverRepository: geoserver-os
   geoserverTag: "v1.0.0-2.19.1"
   sidecarRepository: config-sidecar
   sidecarTag: "v1.0.0"
-  pullPolicy: Always
 
 updateInterval: 10000
 
@@ -12,14 +19,21 @@ geoserverDataDir: /opt/geoserver/data_dir
 
 geoserverUser: admin
 
+replicaCount: 1
+
 # For prefilled password
 # It will be stored in secret later
 geoserverPassword: geoserver
 
+initialMemory: "128M"
+maxMemory: "756M"
+
 s3:
   accessKey: avi
   secretKey: aviPassword
-  endpoint: http://locahost:9000/
+  protocol: http
+  host: localhost
+  port: 9000
   bucketName: geoserver
   dataKey: data.tar.gz
   stateKey: state
@@ -36,8 +50,8 @@ pgSslAuth:
 
 # Define this for extra GeoServer environment variables
 extraGeoserverEnv: |
-#  - name: KEY_1
-#    value: "VALUE_1"
+  - name: COMMUNITY_EXTENSIONS
+    value: "cog-plugin"
 #  - name: KEY_2
 #    value: "VALUE_2"
 
@@ -46,6 +60,27 @@ extraSidecarEnv: |
 #    value: "VALUE_1"
 #  - name: KEY_2
 #    value: "VALUE_2"
+
+labels: {}
+annotations: {}
+
+podAnnotations: {}
+
+resources: 
+  limits:
+    cpu: 2
+    memory: 4500Mi
+  requests:
+    cpu: 2
+    memory: 4000Mi
+
+sidecarResources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 service:
   ## GeoServer service type
@@ -67,3 +102,31 @@ route:
   enabled: true
   tls: false
   path: /geoserver
+
+proxy:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: nginx-for-s3
+    tag: "v1.1.0"
+    pullPolicy: Always
+  initialDelaySeconds: 10
+
+  cache:
+    enabled: true
+    path: /tmp
+    maxSize: "1g"
+    sliceSize: 1m
+    validTime: 24h
+
+  route:
+    enabled: true
+    tls: false
+    path: /geoserver
+  resources: 
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

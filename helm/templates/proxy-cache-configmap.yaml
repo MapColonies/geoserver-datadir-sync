@@ -1,0 +1,15 @@
+{{- if .Values.proxy.enabled -}}
+{{- if .Values.proxy.cache.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ template "geoserver.proxyFullName" . }}-cache
+  labels:
+{{ include "geoserver.proxyLabels" . | indent 4 }}
+data:
+  CACHE_PATH: {{ .Values.proxy.cache.path | default "/tmp" | quote }}
+  CACHE_MAX_SIZE:  {{ .Values.proxy.cache.maxSize | default "1g" | quote }}
+  CACHE_SLICE_SIZE: {{ .Values.proxy.cache.sliceSize | default "1m" | quote }}
+  CACHE_VALID_TIME: {{ .Values.proxy.cache.validTime | default "24h" | quote }}
+{{- end -}}
+{{- end -}}

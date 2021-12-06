@@ -1,0 +1,11 @@
+{{- if .Values.proxy.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ template "geoserver.proxyFullName" . }}
+  labels:
+{{ include "geoserver.proxyLabels" . | indent 4 }}
+data:
+  default.conf.template: {{ tpl (.Files.Get "config/default.conf.template") . | quote }}
+  s3.js.template: {{ tpl (.Files.Get "config/s3.js.template") . | quote }}
+{{- end -}}

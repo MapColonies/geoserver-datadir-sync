@@ -1,0 +1,53 @@
+{{- if .Values.proxy.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "geoserver.proxyFullName" . }}
+  labels:
+{{ include "geoserver.proxyLabels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.proxy.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "geoserver.proxySelectorLabels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "geoserver.proxyLabels" . | indent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.pullSecretName }}
+      containers:
+        - name: {{ template "geoserver.proxyFullName" . }}
+          image: {{ include "geoserver.proxyImage" . }}
+          imagePullPolicy: {{ .Values.proxy.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ template "geoserver.fullname" . }}
+            - secretRef:
+                name: {{ template "geoserver.secretName" . }}
+            {{- if .Values.proxy.cache.enabled }}
+            - configMapRef:
+                name: {{ template "geoserver.proxyFullName" . }}-cache
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.proxy.initialDelaySeconds }}
+            httpGet:
+              path: /nginx_status
+              port: http
+          {{- if .Values.proxy.resources }}
+          resources:
+            {{- toYaml .Values.proxy.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: templates-mount
+              mountPath: /etc/nginx/templates
+      volumes:
+        - name: templates-mount
+          configMap:
+            name: {{ template "geoserver.proxyFullName" . }}
+{{- end -}}
