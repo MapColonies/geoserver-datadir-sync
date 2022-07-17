@@ -1,5 +1,7 @@
 FROM node:14-stretch-slim
 
+RUN apt-get -y update && apt-get -y install rsync
+
 WORKDIR /app
 
 RUN chmod g+w /app

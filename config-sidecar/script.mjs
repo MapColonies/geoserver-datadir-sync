@@ -79,7 +79,7 @@ const updateConfiguration = async () => {
   console.log(chalk.blue('unpacking the data dir'));
   await $`tar -zxf ${DATA_FILE}`;
 
-  await $`cp -r data_dir/* ${args.dataDirPath}`;
+  await $`rsync -a --delete data_dir/* ${args.dataDirPath}`;
 
   await $`rm -rf ${DATA_FILE} && rm -rf data_dir/*`;
 
