@@ -20,7 +20,7 @@ server {
         log_not_found off;
         stub_status;
     }
-    
+
     location / {
         js_content s3.redirect;
     }
