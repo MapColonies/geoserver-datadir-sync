@@ -81,49 +81,56 @@ const s3Client = new S3Client({
 });
 
 const updateConfiguration = async () => {
-  logger.debug({ msg: 'getting state from storage', bucket: args.s3BucketName, key: args.s3StateKey });
+  try {
+    logger.debug({ msg: 'getting state from storage', bucket: args.s3BucketName, key: args.s3StateKey });
 
-  const remoteStateStream = await s3Client.send(new GetObjectCommand({ Bucket: args.s3BucketName, Key: args.s3StateKey }));
-  const remoteState = await streamToString(remoteStateStream.Body);
+    const remoteStateStream = await s3Client.send(new GetObjectCommand({ Bucket: args.s3BucketName, Key: args.s3StateKey }));
+    const remoteState = await streamToString(remoteStateStream.Body);
 
-  if (!args.isInitMode && remoteState == await $`cat ${currentStateFile}`) {
-    logger.info({ msg: 'state unchanged' });
-    return;
-  }
+    if (!args.isInitMode && remoteState == (await $`cat ${currentStateFile}`)) {
+      logger.info({ msg: 'state unchanged' });
+      return;
+    }
 
-  logger.debug({ msg: 'getting data from storage', bucket: args.s3BucketName, key: args.s3DataKey });
+    logger.debug({ msg: 'getting data from storage', bucket: args.s3BucketName, key: args.s3DataKey });
 
-  const datadirStream = await s3Client.send(new GetObjectCommand({ Bucket: args.s3BucketName, Key: args.s3DataKey }));
+    const datadirStream = await s3Client.send(new GetObjectCommand({ Bucket: args.s3BucketName, Key: args.s3DataKey }));
 
-  await streamToFile(datadirStream.Body, DATA_FILE);
+    await streamToFile(datadirStream.Body, DATA_FILE);
 
-  logger.info({ msg: 'unpacking the data dir' });
+    logger.info({ msg: 'unpacking the data dir' });
 
-  await $`tar -zxf ${DATA_FILE}`;
+    await $`tar -zxf ${DATA_FILE}`;
 
-  await $`rsync -a --delete data_dir/* ${args.dataDirPath}`;
+    await $`rsync -a --delete data_dir/* ${args.dataDirPath}`;
 
-  await $`rm -rf ${DATA_FILE} && rm -rf data_dir/*`;
+    await $`rm -rf ${DATA_FILE} && rm -rf data_dir/*`;
 
-  if (!args.isInitMode) {
-    logger.info({ msg: 'sending config reload request to geoserver' });
+    if (!args.isInitMode) {
+      logger.info({ msg: 'sending config reload request to geoserver' });
 
-    const response = await fetch(args.geoserverUrl, {
-      method: 'post',
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${args.geoserverUser}:${args.geoserverPass}`).toString('base64'),
-      },
-    });
+      const response = await fetch(args.geoserverUrl, {
+        method: 'post',
+        headers: {
+          Authorization: 'Basic ' + Buffer.from(`${args.geoserverUser}:${args.geoserverPass}`).toString('base64'),
+        },
+      });
 
-    if (!response.ok) {
-      logger.error({ msg: 'reloading geoserver configuration failed', err: response.statusText });
+      if (!response.ok) {
+        logger.error({ msg: 'reloading geoserver configuration failed', err: response.statusText });
+        process.exit(1);
+      }
+    }
+
+    await fs.writeFile(currentStateFile, remoteState);
+    logger.info({ msg: 'state updated', updatedState: remoteState });
+  } catch (err) {
+    logger.error({ msg: 'an error occurred while updating configuration', err });
+
+    if (args.isInitMode) {
       process.exit(1);
     }
   }
-
-  await fs.writeFile(currentStateFile, remoteState);
-
-  logger.info({ msg: 'state updated', updatedState: remoteState });
 };
 
 if (args.isInitMode) {
