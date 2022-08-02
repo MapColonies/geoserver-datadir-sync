@@ -33,7 +33,7 @@ spec:
           - name: IS_INIT_MODE
             value: 'true'
           {{- with .Values.extraSidecarEnv }}
-          {{- tpl . $ | nindent 12 }}
+          {{- tpl . $ | nindent 10 }}
           {{- end }}
         envFrom:
           - secretRef:
@@ -76,7 +76,7 @@ spec:
             value: 'true'
           - name: POSTGRES_CERTS_MOUNT_PATH
             value: {{ .Values.pgSslAuth.mountPath }}
-          {{- end }}            
+          {{- end }}
           {{- if .Values.rootCerts.enabled }}
           - name: ADD_ROOT_CERTS
             value: 'true'
@@ -137,7 +137,7 @@ spec:
           - name: GEOSERVER_URL
             value: http://localhost:8080/geoserver/rest/reload
           {{- with .Values.extraSidecarEnv }}
-          {{- tpl . $ | nindent 12 }}
+          {{- tpl . $ | nindent 10 }}
           {{- end }}
         envFrom:
           - secretRef:
@@ -154,7 +154,7 @@ spec:
       - name: cert-conf
         secret:
           secretName: {{ .Values.pgSslAuth.secretName }}
-      {{- end }}      
+      {{- end }}
       {{- if .Values.rootCerts.enabled }}
       - name: root-cert-conf
         secret:

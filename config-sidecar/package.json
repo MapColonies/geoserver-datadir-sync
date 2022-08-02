@@ -7,7 +7,10 @@
     "node": ">=14.8.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "start": "node ./src/index.mjs"
   },
   "keywords": [
     "geoserver",
@@ -20,7 +23,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.18.0",
     "yargs": "^17.0.1",
-    "zx": "^1.14.1"
+    "zx": "^7.0.8",
+    "@map-colonies/js-logger": "^0.0.5"
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.18.0",
