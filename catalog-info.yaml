@@ -8,6 +8,9 @@ metadata:
       title: original repo
   tags:
     - java
+    - query-service
+    - vector
+    - wfs
 spec:
   type: service
   lifecycle: production
@@ -24,6 +27,10 @@ metadata:
   description: This is a sidecar container to reload Geoserver configuration from s3.
   tags:
     - java
+    - query-service
+    - vector
+    - wfs
+    - sidecar
 spec:
   type: service
   lifecycle: production
