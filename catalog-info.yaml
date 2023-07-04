@@ -1,0 +1,40 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: geoserver
+  description: Stores query service data
+  links:
+    - url: https://github.com/geoserver/geoserver
+      title: original repo
+  tags:
+    - java
+    - query-service
+    - vector
+    - wfs
+spec:
+  type: service
+  lifecycle: production
+  owner: vector-team
+  system: vector-query-service
+  dependsOn:
+    - resource:default/query-service-db
+    - resource:default/geoserver-sidecar
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: geoserver-sidecar
+  description: This is a sidecar container to reload Geoserver configuration from s3.
+  tags:
+    - java
+    - query-service
+    - vector
+    - wfs
+    - sidecar
+spec:
+  type: service
+  lifecycle: production
+  owner: vector-team
+  system: vector-query-service
+  dependsOn:
+    - resource:default/s3
